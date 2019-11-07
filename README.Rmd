@@ -10,8 +10,7 @@ knitr::opts_chunk$set(
   collapse=TRUE,
   out.width='100%',
   fig.path = "img/",
-  eval = T
-)
+  eval = T)
 ```
 
 # Unidad 1, asignación 2: exportar datos, leer ráster y extraer valores
@@ -56,8 +55,9 @@ Toma nota del código de tu provincia asignada aleatoriamente.
 * Carga el paquete `sf` y el paquete `raster`.
 
 ```{r}
-library(...)
-library(...)
+library(sf)
+library(raster)
+library(sp)
 ```
 
 ## Exporta
@@ -76,15 +76,17 @@ library(...)
 
 
 ```{r}
-st_layers('...')
-... <- st_read(dsn = '...', layer = '...')
-... <- ...[prov$PROV %in% '...', ]
-st_write(obj = ..., dsn = 'data/...', driver = '...')
-... <- st_read(dsn = '...')
-...
+
 ```
 
 ## Ráster
+st_layers('data/divisionRD.gpkg')
+prov <- st_read(dsn ='data/divisionRD.gpkg', layer ='PROVCenso2010')
+miprov <- prov[prov$PROVCenso2010 %in% '13', ]
+print(miprov)
+st_write(obj= miprov, dsn='data/miprovexportado.gpkg', driver='gpkg')
+miprovexportado <- st_read(dsn = 'miprov')
+miprovexportado
 
 * Con la función `raster`, carga el modelo digital de elevaciones que se encuentra en la carpeta `data`. Es el único archivo de extensión `.tif` Asígnalo al objeto `mde`
 
@@ -92,8 +94,8 @@ st_write(obj = ..., dsn = 'data/...', driver = '...')
 
 
 ```{r raster1}
-... <- raster('data/...')
-plot(..., col = terrain.colors(n = 255))
+mde <- raster('data/mde_rd.tif')
+plot(mde, col = terrain.colors(n = 255))
 ```
 
 ## Extraer valores del ráster
@@ -108,8 +110,8 @@ plot(..., col = terrain.colors(n = 255))
 
 
 ```{r raster2}
-... <- raster::extract(..., ...)[[1]]
-...
-summary(...)
-hist(...)
+miprovele<-raster::extract(mde, miprov)[[1]]
+miprovele
+summary(miprovele)
+hist(miprovele)
 ```
